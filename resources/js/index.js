@@ -22,6 +22,12 @@ function messageFormat(message, nameInput){
   }
 
 }
+const serverURL = `https://it3049c-chat.fly.dev/messages`
+async function fetchMessages(){
+  const response = await fetch(serverURL)
+  return response.json();
+}
+
 async function updateMessages() {
   const messages = await fetchMessages();
   let formattedMessages = "";
@@ -31,6 +37,8 @@ async function updateMessages() {
   chatBox.innerHTML = formattedMessages;
 }
 
+setInterval(updateMessages, 2000);
+
 function sendFunction(username, message){
   const newMessage = {
     sender: username,
@@ -38,6 +46,14 @@ function sendFunction(username, message){
     timestamp: new Date()
   };
   
+  fetch(serverURL, {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(newMessage)
+  });
+  updateMessages();
+  
+}
 sendButton.addEventListener("click", function(event){
   event.preventDefault();
   const sender = nameInput.value;
